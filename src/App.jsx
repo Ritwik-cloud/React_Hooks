@@ -3,6 +3,9 @@ import { Navigate, BrowserRouter as Router, Routes, Route } from 'react-router-d
 import { lazy, Suspense } from 'react'
 
 import './App.css'
+
+const NotFound = lazy(() => import('./components/not_found/NotFound'));
+
 const Footer = lazy(() => import('./layout/footer/Footer'));
 const Navbar = lazy(() => import('./layout/navbar/Navbar'));
 const LogIn = lazy(() => import('./pages/auth/logIn/LogIn'));
@@ -33,6 +36,12 @@ const publicRoutes = [
    path: "/",
    element:<Home/>
   },
+  
+  {
+   path: "*",
+   element:<NotFound/>
+  },
+
    
   {
    path: "/about",
