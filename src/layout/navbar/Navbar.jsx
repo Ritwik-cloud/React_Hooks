@@ -4,11 +4,13 @@ import { Menu, X, Palette } from 'lucide-react';
 import { profile_pic } from '../../api/axios/axios';
 import toast from 'react-hot-toast';
 import { useTokenStore } from '../../Store/AuthStore';
+import Profile from '../../pages/auth/profileDetails/profileDetails';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const hasToken = localStorage.getItem("token");
   const hasName = localStorage.getItem("firstName");
+  const email = localStorage.getItem("email");
   const hasImg = localStorage.getItem("ProfilePic");
   const location = useLocation();
   const navigate = useNavigate();
@@ -113,26 +115,16 @@ const token2 = useTokenStore((state) => state.token);
           <div className="hidden md:flex items-center space-x-4">
             {hasToken ? (
               <>
-                <button
-                  onClick={logOut}
-                  className="hover:shadow-lg hover:shadow-red-500/25 duration-200 text-sm font-medium px-4 py-2 rounded-md text-white bg-gradient-to-r from-red-600 to-red-600 hover:from-red-700 hover:to-red-700 transition-colors shadow-sm"
-                >
-                  LogOut
-                </button>
-
-                {hasName && (
-                  <h3 className="text-green-400 text-lg">
-                    {hasName.charAt(0).toUpperCase() + hasName.slice(1)}
-                  </h3>
-                )}
-
-                {hasImg && (
-                  <img
-                    src={profile_pic(hasImg)} 
-                    alt={hasName || 'Profile'}
-                    className="w-8 h-8 rounded-full object-cover"
-                  />
-                )}
+               
+                 <div className="hidden sm:block">
+              <Profile 
+               name={hasName.charAt(0).toUpperCase() + hasName.slice(1)}
+               profileImg={hasImg}
+               email={email}
+               logOut={logOut}
+              />
+            </div>
+            
               </>
             ) : (
               <>
@@ -151,6 +143,11 @@ const token2 = useTokenStore((state) => state.token);
               </>
             )}
           </div>
+
+
+            {/* Profile Component - Hidden on small screens */}
+           
+
 
           {/* Mobile menu button */}
           <div className="flex items-center md:hidden">

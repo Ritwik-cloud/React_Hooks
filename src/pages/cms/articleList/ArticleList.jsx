@@ -1,26 +1,30 @@
-import React, { useEffect, useState } from 'react';
-import { AxiosInstance } from '../../../api/axios/axios';
-import { endPoints } from '../../../api/endpoints/endpoints';
-import toast from 'react-hot-toast';
-import ArticalCard from '../../../components/articleCard/ArticleCard';
-import SweetAlertComponent from '../../../components/sweetAlert/SweetAlertComponent';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { AxiosInstance } from "../../../api/axios/axios";
+import { endPoints } from "../../../api/endpoints/endpoints";
+import toast from "react-hot-toast";
+import ArticalCard from "../../../components/articleCard/ArticleCard";
+import SweetAlertComponent from "../../../components/sweetAlert/SweetAlertComponent";
+import { Link } from "react-router-dom";
 
 function ArticalList() {
   const [lists, setLists] = useState([]);
+  const [filteredList, setFilteredList] = useState([]);
   const [id, setId] = useState();
   const [sweetalert, setSweetalert] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
 
   const handleApi = async () => {
     try {
       setLoading(true);
       const res = await AxiosInstance.post(endPoints.crud.list);
       setLists(res.data.data || []);
+      setFilteredList(res.data.data || []);
+
       return res;
     } catch (error) {
       console.log(error);
-      toast.error('Failed to fetch articles');
+      toast.error("Failed to fetch articles");
     } finally {
       setLoading(false);
     }
@@ -29,6 +33,26 @@ function ArticalList() {
   useEffect(() => {
     handleApi();
   }, []);
+
+  // search functionality
+
+
+    const handleSearch = (e) => {
+       setSearch(e.target.value)  
+  };
+useEffect(() => {
+  const delay = setTimeout(() => {
+    const filtered = lists.filter((item) =>
+      (item.title || "").toLowerCase().includes(search.toLowerCase())
+    );
+    setFilteredList(filtered);
+  }, 300); 
+
+  return () => clearTimeout(delay);
+}, [lists, search]);
+
+
+
 
   const handleDelete = async () => {
     const formData = new FormData();
@@ -56,21 +80,38 @@ function ArticalList() {
           <div className="mb-12">
             <div className="text-center mb-8">
               <h1 className="text-4xl font-bold text-gray-800 mb-2">
-               My Articles
+                My Articles
               </h1>
               <p className="text-gray-600 text-lg">
                 Manage and organize your articles with ease
               </p>
             </div>
-            
+
             {/* Action Buttons */}
-            <div className="flex justify-center md:justify-end">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
+              <input
+                type="text"
+                placeholder="Search articles..."
+                className="w-full md:w-1/2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                value={search}
+                onChange={handleSearch}
+              />
               <Link
                 to="/cms/articalCreate"
                 className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white font-semibold rounded-lg hover:from-green-700 hover:to-green-800 transform hover:scale-105 transition duration-300 shadow-lg hover:shadow-xl"
               >
-                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                <svg
+                  className="w-5 h-5 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 4v16m8-8H4"
+                  />
                 </svg>
                 Create New Article
               </Link>
@@ -81,16 +122,18 @@ function ArticalList() {
           {loading ? (
             <div className="flex justify-center items-center py-20">
               <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-green-600"></div>
-              <span className="ml-4 text-gray-600 text-lg">Loading articles...</span>
+              <span className="ml-4 text-gray-600 text-lg">
+                Loading articles...
+              </span>
             </div>
           ) : (
             <>
               {/* Articles Grid */}
-              {Array.isArray(lists) && lists.length > 0 ? (
+              {Array.isArray(filteredList) && filteredList.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {lists.map((list, index) => (
-                    <div 
-                      key={index || list._id} 
+                  {filteredList.map((list, index) => (
+                    <div
+                      key={index || list._id}
                       className="transform hover:scale-100 transition duration-300"
                     >
                       <ArticalCard
@@ -111,8 +154,18 @@ function ArticalList() {
                 /* Empty State */
                 <div className="text-center py-20">
                   <div className="mb-8">
-                    <svg className="w-24 h-24 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    <svg
+                      className="w-24 h-24 mx-auto text-gray-400 mb-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="1"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      />
                     </svg>
                     <h3 className="text-2xl font-semibold text-gray-700 mb-2">
                       No Articles Found
@@ -124,8 +177,18 @@ function ArticalList() {
                       to="/cms/articalCreate"
                       className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-blue-800 transform hover:scale-105 transition duration-300 shadow-lg"
                     >
-                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                      <svg
+                        className="w-5 h-5 mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M12 4v16m8-8H4"
+                        />
                       </svg>
                       Create Your First Article
                     </Link>

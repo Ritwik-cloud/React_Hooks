@@ -50,6 +50,7 @@ export default function LogIn() {
       if (response.data.status == 200) {
         localStorage.setItem("token", response.data.token)
         localStorage.setItem("firstName", response.data.data.first_name)
+        localStorage.setItem("email", response.data.data.email)
         localStorage.setItem("ProfilePic", response.data.data.profile_pic)
           toast.success(response.data.message)
           
