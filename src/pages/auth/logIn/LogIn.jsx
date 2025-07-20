@@ -69,7 +69,7 @@ export default function LogIn() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center  p-10">
+    <div className="flex min-h-screen items-center justify-center ">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2 w-full max-w-5xl bg-white rounded-2xl shadow-lg overflow-hidden">
         {/* Left Section */}
         <div className="relative flex flex-col items-center justify-center bg-green-500 text-white p-10 overflow-hidden text-center">
